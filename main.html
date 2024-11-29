@@ -1,16 +1,84 @@
 <!DOCTYPE html>
-
-<html>
-
+<html lang="en">
 <head>
-	<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Handling in JS</title>
 </head>
-
 <body>
-	<!-- the entire body must be written by student -->
-    <script type="text/javascript" src="./script.js">
-</script>
+
+    <h2>Smart Evaluator</h2>
+    <label for="expression">Enter Expression (Only +, -, *, / with integers):</label><br><br>
+    <input type="text" id="expression" placeholder="e.g., 3 + 5"><br><br>
+    <button onclick="evaluateExpression()">Evaluate</button>
+    
+    <p id="result"></p>
+
+    <script>
+        // Define custom error classes
+        class OutOfRangeError extends Error {
+            constructor(message) {
+                super(message);
+                this.name = "OutOfRangeError";
+            }
+        }
+
+        class InvalidExprError extends Error {
+            constructor(message) {
+                super(message);
+                this.name = "InvalidExprError";
+            }
+        }
+
+        // Function to evaluate the expression
+        function evalString(expression) {
+            // Check for invalid operator combinations
+            if (/(\+\+|--|\*\*|\/\/|\+-|-\+|\/\+|\*\+|\/\-|\*\-)/.test(expression)) {
+                throw new InvalidExprError("Expression should not have an invalid combination of operators");
+            }
+
+            // Check if expression starts with an invalid operator
+            if (/^[\+\-\*\/]/.test(expression)) {
+                throw new SyntaxError("Expression should not start with an invalid operator");
+            }
+
+            // Check if expression ends with an invalid operator
+            if (/[\+\-\*\/]$/.test(expression)) {
+                throw new SyntaxError("Expression should not end with an invalid operator");
+            }
+
+            // Remove spaces
+            expression = expression.replace(/\s+/g, '');
+
+            // Ensure the expression contains only valid characters (numbers and operators)
+            if (!/^[\d\+\-\*\/]+$/.test(expression)) {
+                throw new OutOfRangeError("Expression should only consist of integers and +,-,*,/ characters");
+            }
+
+            // Evaluate the expression
+            try {
+                return eval(expression);
+            } catch (e) {
+                throw new Error("Evaluation error");
+            }
+        }
+
+        // Handle the evaluation logic
+        function evaluateExpression() {
+            const expression = document.getElementById('expression').value;
+            const resultElement = document.getElementById('result');
+            try {
+                const result = evalString(expression);
+                resultElement.textContent = "Result: " + result;
+            } catch (error) {
+                if (error instanceof OutOfRangeError || error instanceof InvalidExprError) {
+                    resultElement.textContent = error.message;
+                } else {
+                    resultElement.textContent = "Error: " + error.message;
+                }
+            }
+        }
+    </script>
 
 </body>
-
 </html>
