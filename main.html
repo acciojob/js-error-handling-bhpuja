@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error Handling in JS</title>
+    <title>JS Error Handling - Smart Evaluator</title>
 </head>
 <body>
 
@@ -15,7 +15,7 @@
     <p id="result"></p>
 
     <script>
-        // Define custom error classes
+        // 1. Create custom error classes extending the Error class
         class OutOfRangeError extends Error {
             constructor(message) {
                 super(message);
@@ -30,32 +30,30 @@
             }
         }
 
-        // Function to evaluate the expression
+        // 2. evalString function to check and evaluate the expression
         function evalString(expression) {
-            // Check for invalid operator combinations
+            // 2.1 Check for invalid operator combinations (e.g., ++, --, /+, etc.)
             if (/(\+\+|--|\*\*|\/\/|\+-|-\+|\/\+|\*\+|\/\-|\*\-)/.test(expression)) {
                 throw new InvalidExprError("Expression should not have an invalid combination of operators");
             }
 
-            // Check if expression starts with an invalid operator
+            // 2.2 Check if expression starts with an invalid operator (+, -, *, /)
             if (/^[\+\-\*\/]/.test(expression)) {
                 throw new SyntaxError("Expression should not start with an invalid operator");
             }
 
-            // Check if expression ends with an invalid operator
+            // 2.3 Check if expression ends with an invalid operator (+, -, *, /)
             if (/[\+\-\*\/]$/.test(expression)) {
                 throw new SyntaxError("Expression should not end with an invalid operator");
             }
 
-            // Remove spaces
+            // 2.4 Remove spaces and check if the expression contains only valid characters
             expression = expression.replace(/\s+/g, '');
-
-            // Ensure the expression contains only valid characters (numbers and operators)
             if (!/^[\d\+\-\*\/]+$/.test(expression)) {
                 throw new OutOfRangeError("Expression should only consist of integers and +,-,*,/ characters");
             }
 
-            // Evaluate the expression
+            // 2.5 Evaluate the expression
             try {
                 return eval(expression);
             } catch (e) {
@@ -63,7 +61,7 @@
             }
         }
 
-        // Handle the evaluation logic
+        // 3. Function to handle the evaluation process
         function evaluateExpression() {
             const expression = document.getElementById('expression').value;
             const resultElement = document.getElementById('result');
